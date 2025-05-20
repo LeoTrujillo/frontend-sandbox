@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { fetchUsers } from '../services/api';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { fetchUsers, searchUsers as searchUsersApi } from '../services/api';
 import type { User } from '../types/User';
-
 
 export const useUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -14,12 +13,14 @@ export const useUsers = () => {
     const loadUsers = async () => {
       try {
         const data = await fetchUsers();
-        setUsers(data);
-        setIsLoading(false);
+        if (isMounted) {
+          setUsers(data);
+        }
       } catch (error) {
-        setIsError(true);
-        setError(error as Error);
-        setIsLoading(false);
+        if (isMounted) {
+          setIsError(true);
+          setError(error as Error);
+        }
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -32,12 +33,24 @@ export const useUsers = () => {
     };
   }, []);
 
-  return {
+  const searchUsers = useCallback(async (search: string) => {
+    try {
+      const filteredUsers = await searchUsersApi(search);
+      setUsers(filteredUsers);
+    } catch (error) {
+      setIsError(true);
+      setError(error as Error);
+      setIsLoading(false);
+    }
+  }, []);
+
+  return useMemo(() => ({
     data: users,
     isLoading,
     isError,
     error,
-  };
+    searchUsers,
+  }), [users, isLoading, isError, error, searchUsers]);
 };
 
 

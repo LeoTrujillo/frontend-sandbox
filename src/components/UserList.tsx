@@ -1,11 +1,22 @@
 import { type JSX } from 'react';
 import { useUsers } from '../hooks/useUsers';
+import FilterButtons from './FilterButtons';
 
 const UserList = (): JSX.Element => {
-  const { data: users, isLoading, isError, error } = useUsers();
+  const { data: users, isLoading, isError, error, searchUsers } = useUsers();
+
+
+  const handleSearch = async (search: string) => {
+    try {
+      await searchUsers(search);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (<>
     <h1>Users</h1>
+    <FilterButtons onSearch={handleSearch} />
     {isLoading && <p>Loading...</p>}
     {users?.map((user) => (
       <div key={user.id} className='user-card'>
