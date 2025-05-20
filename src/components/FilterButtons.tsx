@@ -13,7 +13,6 @@ const FilterButtons = ({ onSearch }: FilterButtonsProps): JSX.Element => {
   return (
     <div>
       <input type="text" placeholder="Search" onChange={handleSearch} />
-      <button>Filter</button>
     </div>
   );
 };

@@ -24,7 +24,11 @@ const UserList = (): JSX.Element => {
         <p>{user.email}</p>
       </div>
     ))}
-    {isError && <p>There was an error loading the users: {error?.message}</p>}
+    {isError && (
+      <p data-testid="error-message">
+        There was an error loading the users: {error?.message}
+      </p>
+    )}
     {users.length === 0 && <p>No users found</p>}
   </>)
 }
